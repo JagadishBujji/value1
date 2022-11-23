@@ -25,9 +25,9 @@ const Register_Form = () => {
               <select className="input">
                 <option value="0">Category</option>
                 <option value="1">Student</option>
-                <option value="2">BMW</option>
-                <option value="3">Citroen</option>
-                <option value="4">Others</option>
+                <option value="2">Others</option>
+                {/* <option value="3">Citroen</option>
+                <option value="4">Others</option> */}
               </select>
             </div>
             <div className="item submit">
