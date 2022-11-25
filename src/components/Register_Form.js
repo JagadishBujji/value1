@@ -1,5 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 const Register_Form = () => {
+  const [formData,setFormData]=useState({
+    name:"",
+    email:"",
+    phoneNumber:"",
+    location:"",
+    category:""
+  })
+
+  const handleSubmit=(e)=>{
+    e.preventDefault();
+    console.log(formData)
+  }
+
   return (
     <>
       <div className="container">
@@ -8,26 +21,59 @@ const Register_Form = () => {
             <img src="./images/logo.png" alt="" className="logo" />
           </div>
           <h3 className="login-text">Register Form</h3>
-          <form method="post">
+          <form onSubmit={handleSubmit} method="post">
             <div className="item">
-              <input className="input" type="text" placeholder="Name" />
+              <input
+              onChange={(e)=>{
+                setFormData({
+                  ...formData,
+                  name:e.target.value
+                })
+              }}
+              className="input" type="text" placeholder="Name" />
             </div>
             <div className="item">
-              <input className="input" type="email" placeholder="Email" />
+              <input
+              onChange={(e)=>{
+                setFormData({
+                  ...formData,
+                  email:e.target.value
+                })
+              }}
+              className="input" type="email" placeholder="Email" />
             </div>
             <div className="item">
-              <input className="input" type="tel" placeholder="Phone Number" />
+              <input
+              onChange={(e)=>{
+                setFormData({
+                  ...formData,
+                  phoneNumber:e.target.value
+                })
+              }}
+              className="input" type="tel" placeholder="Phone Number" />
             </div>
             <div className="item">
-              <input className="input" type="text" placeholder="Location" />{" "}
+              <input
+              onChange={(e)=>{
+                setFormData({
+                  ...formData,
+                  location:e.target.value
+                })
+              }}
+              className="input" type="text" placeholder="Location" />{" "}
             </div>
             <div class="item">
-              <select className="input">
-                <option value="0">Category</option>
-                <option value="1">Student</option>
-                <option value="2">BMW</option>
-                <option value="3">Citroen</option>
-                <option value="4">Others</option>
+              <select onChange={(e)=>{
+                setFormData({
+                  ...formData,
+                  category:e.target.value
+                })
+              }} className="input">
+                <option disabled value="0">Category</option>
+                <option value="Student">Student</option>
+                <option value="BMW">BMW</option>
+                <option value="Citroen">Citroen</option>
+                <option value="Others">Others</option>
               </select>
             </div>
             <div className="item submit">
