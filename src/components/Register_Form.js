@@ -1,16 +1,72 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 const Register_Form = () => {
   const [formData,setFormData]=useState({
     name:"",
     email:"",
-    phoneNumber:"",
+    phone_number:"",
     location:"",
-    category:""
+    category:"Student",
+    membership_id:""
   })
+  const [lastId,setLastId]=useState() 
+  useEffect(()=>{
 
-  const handleSubmit=(e)=>{
+    const getId=async()=>{
+    await axios.get("http://localhost:5000/getMemId")
+    .then((res)=>{
+      console.log(res)
+      if(res.data.lastId){
+        setLastId(res.data.lastId)
+        splitId(res.data.lastId)
+      }
+    }).catch((err)=>{
+      console.log(err)
+    })
+    }
+    getId();
+  },[])
+  // console.log(lastId)
+
+  const splitId=(id)=>{
+    const ff=id.split("M")
+    const n=ff[2];
+    const prev=Number(n);
+    console.log(prev);
+    const p2=prev+1
+    const mm="V1MEM"+p2
+    setFormData({
+      ...formData,
+      membership_id:mm
+    })
+  }
+
+  const [isPending,setIsPending]=useState(false);
+
+  const handleSubmit=async(e)=>{
     e.preventDefault();
-    console.log(formData)
+    // console.log("1")
+    setIsPending(true);
+    await axios.post("http://localhost:5000/registerUser",formData)
+    .then((res)=>{
+      const data=res.data;
+      console.log(res);
+      if(res.data.added)
+      {
+        alert("user created, your membership id="+data.added.membership_id)
+      }
+      else if(res.data.error==="already exist")
+      {
+        alert("Phone number already exist kindly login")
+      }
+      else{
+        alert(res.data);
+      }
+    }).catch((err)=>{
+      console.log(err)
+    }).finally(()=>{
+      setIsPending(false)
+    })
   }
 
   return (
@@ -24,6 +80,7 @@ const Register_Form = () => {
           <form onSubmit={handleSubmit} method="post">
             <div className="item">
               <input
+              required
               onChange={(e)=>{
                 setFormData({
                   ...formData,
@@ -34,6 +91,7 @@ const Register_Form = () => {
             </div>
             <div className="item">
               <input
+              required
               onChange={(e)=>{
                 setFormData({
                   ...formData,
@@ -44,16 +102,18 @@ const Register_Form = () => {
             </div>
             <div className="item">
               <input
+              required
               onChange={(e)=>{
                 setFormData({
                   ...formData,
-                  phoneNumber:e.target.value
+                  phone_number:e.target.value
                 })
               }}
               className="input" type="tel" placeholder="Phone Number" />
             </div>
             <div className="item">
               <input
+              required
               onChange={(e)=>{
                 setFormData({
                   ...formData,
@@ -63,7 +123,7 @@ const Register_Form = () => {
               className="input" type="text" placeholder="Location" />{" "}
             </div>
             <div class="item">
-              <select onChange={(e)=>{
+              <select required onChange={(e)=>{
                 setFormData({
                   ...formData,
                   category:e.target.value
@@ -77,7 +137,9 @@ const Register_Form = () => {
               </select>
             </div>
             <div className="item submit">
-              <button type="submit">Submit</button>
+              <button 
+              disabled={isPending}
+               type="submit">Submit</button>
             </div>
             {/* <span className="remember">
               {" "}

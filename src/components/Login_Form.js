@@ -1,6 +1,7 @@
 import React, { useState } from "react";
  import {authentication} from '../firebase/firebase'
 import {  RecaptchaVerifier,signInWithPhoneNumber } from "firebase/auth";
+import axios from "axios";
 
 const Login_Form = () => { 
   const [isPhone, setIsPhone] = useState(true);
@@ -22,25 +23,40 @@ const Login_Form = () => {
       // defaultCountry:"IN"
     }, authentication);
   }
-  const sendOtpHandler = (e) => {
+  const sendOtpHandler = async(e) => {
     e.preventDefault();
     setIsPending(true) 
-    generateRecaptcha();
-    let appVerifier=window.recaptchaVerifier;
-    // const pn="+91"+phoneNumber
-    // const mm=Number(pn);
-    signInWithPhoneNumber(authentication,phoneNumber,appVerifier)
-    .then((confirmationResult)=>{
-      window.confirmationResult=confirmationResult;
-      alert("OTP has been sent")
-      // setIsPhone(false);
-      setOtp("")
-      setOtpSent(true);
-    }).catch((err)=>{ 
-      console.log(err);
-    }).finally(()=>{
-    setIsPending(false) 
+
+    await axios.get(`http://localhost:5000/checkRegistered/${nm}`)
+    .then((res)=>{
+      if(res.data.success)
+      {
+        generateRecaptcha();
+        let appVerifier=window.recaptchaVerifier;
+        // const pn="+91"+phoneNumber
+        // const mm=Number(pn);
+        signInWithPhoneNumber(authentication,phoneNumber,appVerifier)
+        .then((confirmationResult)=>{
+          window.confirmationResult=confirmationResult;
+          alert("OTP has been sent")
+          // setIsPhone(false);
+          setOtp("")
+          setOtpSent(true);
+        }).catch((err)=>{ 
+          console.log(err);
+        }).finally(()=>{
+        setIsPending(false) 
+        })
+      }
+      else if(res.data.error)
+      {
+        alert("kindly register to login")
+        setIsPending(false) 
+
+      }
     })
+
+    
     // setOtp("")
     // setOtpSent(true)
   };
